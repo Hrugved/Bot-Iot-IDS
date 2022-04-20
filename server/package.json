@@ -1,0 +1,11 @@
+{
+  "name": "BoT_IoT",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Hrugved",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.17.3",
+    "python-shell": "^3.0.1"
+  }
+}
