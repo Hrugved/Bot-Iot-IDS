@@ -39,10 +39,22 @@ router.post('/register', async (req,res) => {
     })
 })
 
-router.get('/restart', async (req,res) => {
-    const sql = `UPDATE client SET start_time=CURRENT_TIMESTAMP WHERE client_id=${req.query.client_id}`;
+router.get('/start', async (req,res) => {
+    const sql = `UPDATE client SET start_time=FROM_UNIXTIME(${req.query.timestamp}*0.001), active=true WHERE client_id=${req.query.client_id}`;
     db.query(sql, function (err, data) {
         if (err) {
+            console.log(err);
+            return res.status(400).send(null);
+        }
+        res.status(200).send();
+    });
+})
+
+router.get('/stop', async (req,res) => {
+    const sql = `UPDATE client SET active=false WHERE client_id=${req.query.client_id}`;
+    db.query(sql, function (err, data) {
+        if (err) {
+            console.log(err);
             return res.status(400).send(null);
         }
         res.status(200).send();
