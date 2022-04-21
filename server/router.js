@@ -23,18 +23,31 @@ router.get('/send', async (req,res) => {
     });
 })
 
+router.post('/register', async (req,res) => {
+    const sql = `INSERT into client (client_name, client_system, ip) VALUES ('${req.body.client_name}','${req.body.client_system}','${req.body.ip}');`
+    db.query(sql, function (err, data) {
+        if (err) {
+            return res.status(400).send(null);
+        }
+        db.query(`SELECT * FROM client WHERE ip='${req.body.ip}' LIMIT 1`, function (err, data) {
+            if (err) {
+                res.status(400).send(null);
+                throw err;
+            }
+            res.status(200).send(data);
+        });
+    })
+})
 
+router.get('/restart', async (req,res) => {
+    const sql = `UPDATE client SET start_time=CURRENT_TIMESTAMP WHERE client_id=${req.query.client_id}`;
+    db.query(sql, function (err, data) {
+        if (err) {
+            return res.status(400).send(null);
+        }
+        res.status(200).send();
+    });
+})
 
-// router.get('/semesters', async (req,res) => {
-//     const sql = `SELECT semester FROM course GROUP BY semester`;
-//     db.query(sql, function (err, data) {
-//         if (err) {
-//             res.status(400).send(null);
-//             throw err;
-//         }
-//         data = data.map(el => el.semester)
-//         res.status(200).send(data);
-//     });
-// })
 
 module.exports = router
