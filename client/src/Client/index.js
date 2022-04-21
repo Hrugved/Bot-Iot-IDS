@@ -12,6 +12,9 @@ const Client = (props) => {
   // const [name,setName] = useState("Hrugved")
   const [active,setActive] = useState(false)
   const [id,setId] = useState(-1)
+  const [packets, setPackets] = useState([])
+  const [packetNum,setPacketNum] = useState(0)
+  const [intervalId, setIntervalId] = useState(null);
 
   const register = async (_ip,_system) => {
     const { data } = await axios.post('/register', {
@@ -32,6 +35,40 @@ const Client = (props) => {
       register(ip_,system_)
     }
   },[init])
+
+  const sendPacket = async () => {
+    console.log('sendPacket');
+    const { data } = await axios.get('/send', {
+      params: {client_id: id}
+    });
+    setPackets(oldArray => [data[0],...oldArray])
+    setPacketNum(x => x+1)
+  }
+
+
+  useEffect(() => {
+    if(id>0) {
+      if(active) {
+        const intervalId_ = setInterval(() => {  //assign interval to a variable to clear it.
+          sendPacket()
+        }, 1000)
+        setIntervalId(intervalId_)
+      } else {
+        clearInterval(intervalId);
+        setIntervalId(null)
+      }
+      
+      return () => clearInterval(intervalId); //This is important
+    }
+  }, [id,active])
+
+  const handleStart = () => {
+    setActive(true)
+  }
+
+  const handleStop = () => {
+    setActive(false)
+  }
 
   return (
     <div className={styles.root}>
@@ -74,22 +111,21 @@ const Client = (props) => {
       <div className={styles.lower_box}>
 
         <div className={styles.control_box}>
-          <div className={styles.start_box} onClick={() => setActive(true)}>
+          <div className={styles.start_box} onClick={() => handleStart()}>
             <p className={styles.start}>start</p>
           </div>
-          <div className={styles.stop_box} onClick={() => setActive(false)}>
+          <div className={styles.stop_box} onClick={() => handleStop()}>
             <p className={styles.stop}>stop</p>
           </div>
         </div>
 
         <div className={styles.packet_number_box}>
-          <p className={styles.packet_number}>00000</p>
+          <p className={styles.packet_number}>{packetNum}</p>
         </div>
 
         <div className={styles.packets_box}>
         <div className={styles.packets_wrapper}>
-          <p className={styles.packets}>{String.raw`{"id":573361,"seq":"199657","stddev":"1.6369049999999998","N_IN_Conn_P_SrcIP":"11","min":"0.0","state_number":"1","mean":"2.31042","N_IN_Conn_P_DstIP":"100","drate":"0.0","srate":"0.378219","max":"3.590756"}`}</p>
-          <p className={styles.packets}>{String.raw`{"id":51,"seq":"199657","stddev":"1.6369049999999998","N_IN_Conn_P_SrcIP":"11","min":"0.0","state_number":"1","mean":"2.31042","N_IN_Conn_P_DstIP":"100","drate":"0.0","srate":"0.378219","max":"3.590756"}`}</p>
+          {packets.map(p => (<p key={p.id} className={styles.packets}>{String.raw`${JSON.stringify(p)}`}</p>))}
         </div>
         </div>
 
