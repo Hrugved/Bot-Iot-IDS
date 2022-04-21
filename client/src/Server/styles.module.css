@@ -31,7 +31,7 @@
   min-width: 0; 
   grid-column: 2/3;
   grid-row: 1/2 ;
-  background: var(--g-r-bi);
+  background: var(--g-o-bi);
   
   display: flex;
   /* flex-direction: column; */

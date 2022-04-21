@@ -4,11 +4,13 @@
   --color-primary-3: rgb(133, 244, 255);
   --color-primary-4: rgb(66, 194, 255); */
 
---g-g-bc: #00b712;
---g-g-bi: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+--c-g: #00b712;
 
---g-r-bc: #f9484a;
---g-r-bi: linear-gradient(315deg, #f9484a 0%, #fbd72b 74%);
+--c-r: #f9484a;
+
+--g-g-bi: linear-gradient(315deg, #00b712 0%, #5aff15 74%);
+--g-o-bi: linear-gradient(315deg, #f9484a 0%, #fbd72b 74%);
+--g-r-bi: linear-gradient(to right, #ed213a, #93291e); 
 
 --gray: #34495e;
 --darkgray: #2c3e50;
