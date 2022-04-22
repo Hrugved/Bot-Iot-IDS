@@ -106,7 +106,7 @@ const Server = (props) => {
       getLogs()
       getClients()
     },
-    3000,
+    1000,
     true
   )
 

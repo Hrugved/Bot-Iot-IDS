@@ -62,7 +62,7 @@ router.get('/stop', async (req,res) => {
 })
 
 router.get('/clients', async (req,res) => {
-    const sql = `SELECT * FROM client`;
+    const sql = `SELECT * FROM client ORDER BY active DESC`;
     db.query(sql, function (err, data) {
         if (err) {
             console.log(err);
