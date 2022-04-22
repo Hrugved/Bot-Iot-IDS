@@ -171,6 +171,7 @@
 
 .packets {
   color: var(--c-g);
+  margin-bottom: .5rem;
 }
 
 .input_wrapper {
