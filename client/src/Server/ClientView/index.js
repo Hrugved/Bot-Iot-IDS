@@ -51,19 +51,16 @@ const ClientView = ({client,setClient}) => {
         <div className={styles.ip_box}>
           <p className={styles.ip}>{client.ip}</p>
         </div>
-        {client.active && (<div className={styles.active_box}>
+        {client.active ? (<div className={styles.active_box}>
           <p className={styles.status}>active</p>
-        </div>)}
-
-        {!client.active && (<div className={styles.inactive_box}>
+        </div>) : (<div className={styles.inactive_box}>
           <p className={styles.status}>inactive</p>
         </div>)}
         
       </div>
       
       <div className={styles.timer_box}>
-        {client.active && <p className={styles.timer}>{time}</p>}
-        {!client.active && <p className={styles.timer_stop}>00:00:00</p>}
+        {client.active ?  (<p className={styles.timer}>{time}</p>) : (<p className={styles.timer_stop}>00:00:00</p>)}
       </div>
 
     </div>

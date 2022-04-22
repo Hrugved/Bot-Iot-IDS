@@ -75,28 +75,14 @@ const Server = (props) => {
     }
   }})
 
-  const clients = [
-    {
-      client_id: 1,
-      client_name: 'ruke2',
-      client_system: 'linux',
-      ip: '8.8.8.9',
-      start_time: Date.now(),
-      active: true
-    },
-    {
-      client_id: 2,
-      client_name: 'hrug',
-      client_system: 'Window',
-      ip: '123.10.8.9',
-      start_time: Date.now(),
-      active: false
-    }
-  ]
+  const [clients,setClients] = useState(null)
+  const [intervalLower,setIntervalLower] = useState(-1);
+  const [intervalUpper,setIntervalUpper] = useState(-1);
+  const [client,setClient] = useState(-1)
 
-  const [intervalId, setIntervalId] = useState(null);
+  const [intervalId, setIntervalId] = useState({});
 
-  const getUpdate = async () => {
+  const getLogs = async () => {
     // console.log('getUpdate');
     let interval_ = [0,Date.now()]
     if(intervalLower>0 && intervalUpper>0) {
@@ -110,20 +96,19 @@ const Server = (props) => {
     setData(data)
   }
 
+  const getClients = async () => {
+    const { data } = await axios.get('/clients');
+    setClients(data)
+  }
+
   useInterval(
     () => {
-      getUpdate()
+      getLogs()
+      getClients()
     },
     3000,
+    true
   )
-
-
-    
-
-
-  const [intervalLower,setIntervalLower] = useState(-1);
-  const [intervalUpper,setIntervalUpper] = useState(-1);
-  const [client,setClient] = useState(-1)
 
   const handleSelectRange = (e) => {
     if(e) {
@@ -135,11 +120,19 @@ const Server = (props) => {
     }
   }
 
+  const getClient = () => {
+    return clients.find(c => c.client_id === client);
+  }
+
+  let comp = null
+  if(clients) {
+    comp = client>0 ? (<ClientView client={getClient()} setClient={setClient}/>) : (clients && <View clients={clients} setClient={setClient}/>);
+  }
+
   return (
     <div className={styles.root}>
       <div className={styles.uppperBox}>
-        {client<0 && <View clients={clients} setClient={setClient}/>}
-        {client>0 && <ClientView client={clients[0]} setClient={setClient}/>}
+        {comp}
       </div>
       <div className={styles.midBox}>
         <DateRangePicker format="yyyy-MM-dd HH:mm:ss" onChange={(e) => handleSelectRange(e)}/>

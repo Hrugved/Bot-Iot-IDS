@@ -61,6 +61,18 @@ router.get('/stop', async (req,res) => {
     });
 })
 
+router.get('/clients', async (req,res) => {
+    const sql = `SELECT * FROM client`;
+    db.query(sql, function (err, data) {
+        if (err) {
+            console.log(err);
+            return res.status(400).send(null);
+        }
+        console.log(data);
+        res.status(200).send(data);
+    });
+})
+
 // const req.body.filter = {
 //     client_id: 2, -> omit for all clients
 //     interval: [0, Date.now()] <- if omitted (timestamp in ms)
