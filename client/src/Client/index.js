@@ -77,7 +77,7 @@ const Client = (props) => {
         setIntervalTimerId(null)
       }
       
-      return () => clearInterval(intervalId); //This is important
+      return () => clearInterval(intervalTimerId); //This is important
     }
   }, [id,startTime])
 
