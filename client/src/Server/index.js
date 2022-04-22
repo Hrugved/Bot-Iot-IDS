@@ -84,14 +84,14 @@ const Server = (props) => {
 
   const getLogs = async () => {
     // console.log('getUpdate');
-    let interval_ = [0,Date.now()]
+    let body = {}
+    body.interval = [0,Date.now()]
     if(intervalLower>0 && intervalUpper>0) {
-      interval_ = [intervalLower,intervalUpper]
+      body.interval = [intervalLower,intervalUpper]
     }
-    // console.log(interval_);
-    const { data } = await axios.post('/logs', {
-      interval: interval_
-    });
+    if(client>0) body.client_id=client
+    // console.log(body);
+    const { data } = await axios.post('/logs', body);
     // console.log(data);
     setData(data)
   }
@@ -126,7 +126,7 @@ const Server = (props) => {
 
   let comp = null
   if(clients) {
-    comp = client>0 ? (<ClientView client={getClient()} setClient={setClient}/>) : (clients && <View clients={clients} setClient={setClient}/>);
+    comp = client<0 ?  (clients && <View clients={clients} setClient={setClient}/>) : (<ClientView client={getClient()} setClient={setClient}/>)
   }
 
   return (

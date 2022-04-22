@@ -1,26 +1,21 @@
 import React, { Fragment, useEffect, useState } from "react";
 import styles from "./styles.module.css";
 import axios from "axios-server"
+import useInterval from 'use-interval'
 
 const ClientView = ({client,setClient}) => {
 
   const [intervalTimerId, setIntervalTimerId] = useState(null);
   const [time,setTime] = useState("")
 
-  useEffect(() => {
-      if(client.active) {
-        const intervalId_ = setInterval(() => {  //assign interval to a variable to clear it.
-          setTime(msToHMS(Date.now() - client.start_time))
-          console.log(time);
-        }, 1000)
-        setIntervalTimerId(intervalId_)
-      } else {
-        setTime("00:00:00")
-        clearInterval(intervalTimerId);
-        setIntervalTimerId(null)
-      }
-      return () => clearInterval(intervalTimerId); //This is important
-    }, [])
+    useInterval(
+      () => {
+        const start_time = new Date(client.start_time).getTime()
+        setTime(msToHMS(Date.now() - start_time))
+      },
+      client.active ? 1000 : null,
+      client.active
+    )
 
   function msToHMS(ms) {
     const seconds = Math.floor((ms / 1000) % 60);
