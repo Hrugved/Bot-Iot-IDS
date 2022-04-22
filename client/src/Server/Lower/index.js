@@ -3,6 +3,8 @@ import styles from "./styles.module.css";
 
 const Lower = ({data}) => {
 
+  // console.log(data);
+
   // const category = ['DDoS', 'DoS', 'Normal', 'Reconnaissance', 'Theft']
   // const subcategory = ['Data_Exfiltration','HTTP','Keylogging','Normal','OS_Fingerprint','Service_Scan','TCP','UDP']
   const cat_init = {
@@ -46,22 +48,35 @@ const Lower = ({data}) => {
     setVuls(packets_-cat_['Normal'])
   }
 
+  const setNums = () => {
+    let packets_ = 0
+    let normal_ = 0
+    Object.entries(data).forEach(([c,cv]) => {
+      packets_ += cv.count
+      if(cv==='Normal') normal_ = cv
+    });
+    setPackets(packets_)
+    setVuls(packets_-normal_)
+  }
+
   useEffect(() => {
-    // console.log('data'+JSON.stringify(data));
-    // console.log('cat_'+JSON.stringify(cat_));
-    // console.log('sub_'+JSON.stringify(sub_));
-    resetData()
-    // console.log('cat_u'+JSON.stringify(cat_));
-    // console.log('sub_u'+JSON.stringify(sub_));
-  },[])
+    setNums()
+    if(catSelected) handleCat('$')
+    else if(subSelected) handleSub('$')
+    else resetData()
+  },[data])
 
   const handleCat = (cs) => {
     if(cs===catSelected) {
       setCatSelected("")
       resetData()
     } else {
-      setCatSelected(cs)
-      setSubSelected("")
+      if(cs==='$') {
+        cs = catSelected
+      } else {
+        setCatSelected(cs)
+        setSubSelected("")
+      }
       const cat_ = {...cat_init}
       const sub_ = {...sub_init}
       Object.entries(data).forEach(([c,cv]) => {
@@ -83,8 +98,12 @@ const Lower = ({data}) => {
       setSubSelected("")
       resetData()
     } else {
-      setSubSelected(ss)
-      setCatSelected("")
+      if(ss==='$') {
+        ss = subSelected
+      } else {
+        setSubSelected(ss)
+        setCatSelected("")
+      }
       const cat_ = {...cat_init}
       const sub_ = {...sub_init}
       sub_[ss]=0

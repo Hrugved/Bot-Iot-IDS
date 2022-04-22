@@ -63,19 +63,20 @@ router.get('/stop', async (req,res) => {
 
 // const req.body.filter = {
 //     client_id: 2, -> omit for all clients
-//     interval: [0, Date.now()] -> timestamp in ms
+//     interval: [0, Date.now()] <- if omitted (timestamp in ms)
 // }
 router.post('/logs', async (req,res) => {
-    const {client_id,interval} = req.body
-    // console.log('client_id '+client_id);
-    // console.log('interval '+interval);
+    let {client_id,interval} = req.body
+    if(!interval) {
+        console.log('setting interval...');
+        interval = [0,Date.now()]
+    }
     let sql = `SELECT CONCAT (category, '_', subcategory) AS cat_sub,COUNT(*) as count FROM log`
     sql += ` WHERE log_time BETWEEN FROM_UNIXTIME(${interval[0]}*0.001) AND FROM_UNIXTIME(${interval[1]}*0.001)` // unixtimestamps are in secs
     if(client_id) {
         sql+=` AND client_id=${client_id}` 
     }
     sql += ` GROUP BY cat_sub;`
-    console.log(sql);
     db.query(sql, function (err, data) {
         if (err) {
             return res.status(400).send(null);
