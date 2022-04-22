@@ -5,14 +5,14 @@ const Lower = ({data}) => {
 
   // const category = ['DDoS', 'DoS', 'Normal', 'Reconnaissance', 'Theft']
   // const subcategory = ['Data_Exfiltration','HTTP','Keylogging','Normal','OS_Fingerprint','Service_Scan','TCP','UDP']
-  const [cat,setCat] = useState({
+  const cat_init = {
     DDoS: 0,
     DoS: 0,
     Normal: 0,
     Reconnaissance: 0,
     Theft: 0,
-  })
-  const [sub,setSub] = useState({
+  }
+  const sub_init = {
     Data_Exfiltration: 0,
     HTTP: 0,
     Keylogging: 0,
@@ -21,13 +21,17 @@ const Lower = ({data}) => {
     Service_Scan: 0,
     TCP: 0,
     UDP: 0,
-  })
+  }
+  const [cat,setCat] = useState({...cat_init})
+  const [sub,setSub] = useState({...sub_init})
   const [packets,setPackets] = useState(0)
   const [vuls,setVuls] = useState(0)
+  const [catSelected,setCatSelected] = useState("")
+  const [subSelected,setSubSelected] = useState("")
 
-  const setData = () => {
-    const cat_ = {...cat}
-    const sub_ = {...sub}
+  const resetData = () => {
+    const cat_ = {...cat_init}
+    const sub_ = {...sub_init}
     let packets_ = 0
     Object.entries(data).forEach(([c,cv]) => {
       cat_[c] = cv.count
@@ -44,33 +48,83 @@ const Lower = ({data}) => {
 
   useEffect(() => {
     // console.log('data'+JSON.stringify(data));
-    
     // console.log('cat_'+JSON.stringify(cat_));
     // console.log('sub_'+JSON.stringify(sub_));
-    setData()
+    resetData()
     // console.log('cat_u'+JSON.stringify(cat_));
     // console.log('sub_u'+JSON.stringify(sub_));
   },[])
+
+  const handleCat = (cs) => {
+    if(cs===catSelected) {
+      setCatSelected("")
+      resetData()
+    } else {
+      setCatSelected(cs)
+      setSubSelected("")
+      const cat_ = {...cat_init}
+      const sub_ = {...sub_init}
+      Object.entries(data).forEach(([c,cv]) => {
+        if(c!==cs) cat_[c]=0
+        else {
+          cat_[c] = cv.count
+          Object.entries(cv.subcategory).forEach(([s,sv]) => {
+            sub_[s] = sv
+          })
+        }
+      });
+      setCat(cat_)
+      setSub(sub_)
+    }
+  }
+
+  const handleSub = (ss) => {
+    if(ss===subSelected) {
+      setSubSelected("")
+      resetData()
+    } else {
+      setSubSelected(ss)
+      setCatSelected("")
+      const cat_ = {...cat_init}
+      const sub_ = {...sub_init}
+      sub_[ss]=0
+      Object.entries(data).forEach(([c,cv]) => {
+        cat_[c]=cv.subcategory[ss]
+        Object.entries(cv.subcategory).forEach(([s,sv]) => {
+          if(s!==ss) sub_[s] = 0
+          else sub_[s]+=sv
+        })
+      });
+      setCat(cat_)
+      setSub(sub_)
+    }
+  }
 
   return (
     <div className={styles.root}>
       <div className={styles.packets}>{packets}</div>
       <div className={styles.vulnerability}>{vuls}</div>
       <div className={styles.categories}>
-        {Object.entries(cat).map(([c,v]) => (
-          <div className={styles.cat_box}>
-            <p className={styles.cat_name}>{c}</p>
-            <p className={styles.cat_val}>{v}</p>
-          </div>
-        ))}
+        {Object.entries(cat).map(([c,v]) => {
+          let box_class = (c!==catSelected) ? styles.cat_box : styles.cat_box_selected
+          return (
+            <div key={c} className={box_class} onClick={() => handleCat(c)}>
+              <p className={styles.cat_name}>{c}</p>
+              <p className={styles.cat_val}>{v}</p>
+            </div>
+            )
+          })}
       </div>
       <div className={styles.subcategories}>
-        {Object.entries(sub).map(([s,v]) => (
-          <div className={styles.sub_box}>
-            <p className={styles.sub_name}>{s}</p>
-            <p className={styles.sub_val}>{v}</p>
-          </div>
-        ))}
+        {Object.entries(sub).map(([s,v]) => {
+          let box_class = (s!==subSelected) ? styles.sub_box : styles.sub_box_selected
+          return (
+            <div key={s} className={box_class} onClick={() => handleSub(s)}>
+              <p className={styles.sub_name}>{s}</p>
+              <p className={styles.sub_val}>{v}</p>
+            </div>
+          )
+          })}
       </div>
     </div>
   );

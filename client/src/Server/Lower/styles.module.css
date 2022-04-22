@@ -47,6 +47,14 @@
   border-radius: 10px;
 }
 
+.cat_box_selected {
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
+  border: 1px solid #F76E11;
+  border-radius: 10px;
+}
+
 .cat_name {
   font-size: 3rem;
   color: #F76E11;
@@ -65,6 +73,14 @@
 }
 
 .sub_box:hover {
+  border: 1px solid #FFE61B;
+  border-radius: 10px;
+}
+
+.sub_box_selected {
+  text-align: center;
+  padding: 1rem;
+  cursor: pointer;
   border: 1px solid #FFE61B;
   border-radius: 10px;
 }
